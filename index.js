@@ -145,7 +145,8 @@ app.get('/api/hemocentros', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('220 - SERVER OK')
+  res.send('220 - SERVER OK');
+  console.log('Server accessed');
 })
 
 app.post('/api/hemocentros', (req, res) => {
