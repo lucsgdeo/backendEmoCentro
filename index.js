@@ -3,6 +3,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const logger = require('./utils/logger');
+const { addUncaughtExceptionCaptureCallback } = require('process');
 const app = express();
 const PORT = 3000;
 
@@ -142,6 +143,10 @@ app.get('/api/hemocentros', (req, res) => {
   const hemocentros = readHemocentros();
   res.json(hemocentros);
 });
+
+app.get('/', (req, res) => {
+  res.send('220 - SERVER OK')
+})
 
 app.post('/api/hemocentros', (req, res) => {
   const authHeader = req.headers.authorization;
