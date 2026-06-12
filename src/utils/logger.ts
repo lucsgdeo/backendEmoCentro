@@ -1,24 +1,19 @@
-import fs from 'fs';
-import path from 'path';
-
-// Point to the root directory's logs folder
-const LOG_DIR = path.join(process.cwd(), 'logs');
-const LOG_FILE = path.join(LOG_DIR, 'app.log');
-
-// Ensure log directory exists
-if (!fs.existsSync(LOG_DIR)) {
-  fs.mkdirSync(LOG_DIR, { recursive: true });
-}
-
+// Utility for clean terminal logging
 const log = (type: string, message: string) => {
   const timestamp = new Date().toISOString();
-  const logMessage = `[${timestamp}] [${type}] ${message}\n`;
   
-  try {
-    fs.appendFileSync(LOG_FILE, logMessage, 'utf8');
-  } catch (err) {
-    console.error('Error writing to log file:', err);
-  }
+  // Basic colors using ANSI escape codes
+  const colors = {
+    reset: "\x1b[0m",
+    info: "\x1b[36m",    // Cyan
+    error: "\x1b[31m",   // Red
+    timestamp: "\x1b[90m" // Gray
+  };
+
+  const color = type === 'ERROR' ? colors.error : colors.info;
+  
+  // Format: [ISO_TIMESTAMP] [TYPE] Message
+  console.log(`${colors.timestamp}[${timestamp}]${colors.reset} ${color}[${type}]${colors.reset} ${message}`);
 };
 
 export default {

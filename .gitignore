@@ -2,6 +2,4 @@ node_modules/
 dist/
 .env
 *.log
-logs/
-src/logs/
 package-lock.json
