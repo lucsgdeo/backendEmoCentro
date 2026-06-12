@@ -1,7 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const LOG_DIR = path.join(__dirname, '..', 'logs');
+// Point to the root directory's logs folder
+const LOG_DIR = path.join(process.cwd(), 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'app.log');
 
 // Ensure log directory exists

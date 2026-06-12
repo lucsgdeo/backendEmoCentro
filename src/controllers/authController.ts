@@ -5,6 +5,14 @@ import jwt from 'jsonwebtoken';
 
 export const register = async (req: Request, res: Response) => {
   try {
+    // Debugging: Log the received body
+    console.log('Register attempt with body:', req.body);
+
+    if (!req.body) {
+      logger.error('Corpo da requisição ausente (req.body is undefined)');
+      return res.status(400).json({ error: 'Corpo da requisição é obrigatório' });
+    }
+
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ error: 'E-mail e senha são obrigatórios' });
@@ -20,12 +28,17 @@ export const register = async (req: Request, res: Response) => {
     res.status(201).json({ message: 'Usuário criado com sucesso' });
   } catch (error: any) {
     logger.error(`Erro no registro: ${error.message}`);
+    console.error('Register error:', error);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 };
 
 export const login = async (req: Request, res: Response) => {
   try {
+    if (!req.body) {
+      return res.status(400).json({ error: 'Corpo da requisição é obrigatório' });
+    }
+
     const { email, password } = req.body;
     if (!email || !password) {
       return res.status(400).json({ error: 'E-mail e senha são obrigatórios' });
