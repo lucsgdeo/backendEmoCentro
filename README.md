@@ -2,6 +2,8 @@
 
 API para gerenciamento de hemocentros e agendamentos de doação de sangue. Este projeto foi desenvolvido em Node.js com TypeScript e utiliza MongoDB para persistência de dados.
 
+**Frontend:** [frontend-emo-centro.vercel.app](https://frontend-emo-centro.vercel.app/)
+
 ## 🚀 Tecnologias
 
 - **Node.js** & **Express**
@@ -73,4 +75,4 @@ A autenticação JWT foi removida para simplificação. A identificação do usu
 Os logs da aplicação são exibidos em tempo real no terminal com cores para facilitar a distinção entre mensagens informativas (`INFO`) e erros (`ERROR`).
 
 ---
-Desenvolvido para fins acadêmicos e de gerenciamento de doações.
+Desenvolvido para fins acadêmicos
