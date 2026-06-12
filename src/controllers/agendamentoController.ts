@@ -6,8 +6,10 @@ export const getAll = async (req: Request, res: Response) => {
   try {
     const { userEmail } = req.query;
     
-    // Se passar o email na query (?userEmail=...), filtra. Se não, traz todos.
-    const filter = userEmail ? { userEmail } : {};
+    const filter: any = {};
+    if (typeof userEmail === 'string') {
+      filter.userEmail = userEmail;
+    }
     
     const agendamentos = await Agendamento.find(filter).populate('hemocentroId');
     res.json(agendamentos);
@@ -19,6 +21,10 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const create = async (req: Request, res: Response) => {
   try {
+    if (!req.body) {
+      return res.status(400).json({ error: 'Corpo da requisição é obrigatório' });
+    }
+
     const { userEmail, hemocentroId, data, horario } = req.body;
     
     if (!userEmail || !hemocentroId || !data || !horario) {
@@ -43,16 +49,17 @@ export const create = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { data, horario, userEmail } = req.body;
+    const { data, horario, userEmail } = req.body || {};
 
-    // Filtra pelo ID e opcionalmente pelo email se for fornecido
     const filter: any = { _id: id };
-    if (userEmail) filter.userEmail = userEmail;
+    if (typeof userEmail === 'string') {
+      filter.userEmail = userEmail;
+    }
 
     const agendamento = await Agendamento.findOneAndUpdate(
       filter,
       { data, horario },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!agendamento) {
@@ -70,10 +77,12 @@ export const update = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { userEmail } = req.body;
+    const { userEmail } = req.body || {};
 
     const filter: any = { _id: id };
-    if (userEmail) filter.userEmail = userEmail;
+    if (typeof userEmail === 'string') {
+      filter.userEmail = userEmail;
+    }
 
     const agendamento = await Agendamento.findOneAndDelete(filter);
 
