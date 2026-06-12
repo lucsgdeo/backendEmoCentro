@@ -1,13 +1,15 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import Agendamento from '../models/Agendamento';
 import logger from '../utils/logger';
-import { AuthRequest } from '../middlewares/auth';
 
-export const getAll = async (req: AuthRequest, res: Response) => {
+export const getAll = async (req: Request, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
+    const { userEmail } = req.query;
     
-    const agendamentos = await Agendamento.find({ userEmail: req.user.email }).populate('hemocentroId');
+    // Se passar o email na query (?userEmail=...), filtra. Se não, traz todos.
+    const filter = userEmail ? { userEmail } : {};
+    
+    const agendamentos = await Agendamento.find(filter).populate('hemocentroId');
     res.json(agendamentos);
   } catch (error: any) {
     logger.error(`Erro ao buscar agendamentos: ${error.message}`);
@@ -15,23 +17,22 @@ export const getAll = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const create = async (req: AuthRequest, res: Response) => {
+export const create = async (req: Request, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
-
-    const { hemocentroId, data, horario } = req.body;
-    if (!hemocentroId || !data || !horario) {
-      return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
+    const { userEmail, hemocentroId, data, horario } = req.body;
+    
+    if (!userEmail || !hemocentroId || !data || !horario) {
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes (inclusive userEmail)' });
     }
 
     const novoAgendamento = await Agendamento.create({
-      userEmail: req.user.email,
+      userEmail,
       hemocentroId,
       data,
       horario
     });
 
-    logger.info(`Agendamento criado para ${req.user.email} no hemocentro ${hemocentroId} em ${data} ${horario}`);
+    logger.info(`Agendamento criado para ${userEmail} no hemocentro ${hemocentroId}`);
     res.status(201).json(novoAgendamento);
   } catch (error: any) {
     logger.error(`Erro ao criar agendamento: ${error.message}`);
@@ -39,15 +40,17 @@ export const create = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const update = async (req: AuthRequest, res: Response) => {
+export const update = async (req: Request, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
-
     const { id } = req.params;
-    const { data, horario } = req.body;
+    const { data, horario, userEmail } = req.body;
+
+    // Filtra pelo ID e opcionalmente pelo email se for fornecido
+    const filter: any = { _id: id };
+    if (userEmail) filter.userEmail = userEmail;
 
     const agendamento = await Agendamento.findOneAndUpdate(
-      { _id: id, userEmail: req.user.email },
+      filter,
       { data, horario },
       { new: true }
     );
@@ -56,7 +59,7 @@ export const update = async (req: AuthRequest, res: Response) => {
       return res.status(404).json({ error: 'Agendamento não encontrado' });
     }
 
-    logger.info(`Agendamento ${id} atualizado para ${req.user.email}`);
+    logger.info(`Agendamento ${id} atualizado`);
     res.json(agendamento);
   } catch (error: any) {
     logger.error(`Erro ao atualizar agendamento: ${error.message}`);
@@ -64,18 +67,21 @@ export const update = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const remove = async (req: AuthRequest, res: Response) => {
+export const remove = async (req: Request, res: Response) => {
   try {
-    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
-
     const { id } = req.params;
-    const agendamento = await Agendamento.findOneAndDelete({ _id: id, userEmail: req.user.email });
+    const { userEmail } = req.body;
+
+    const filter: any = { _id: id };
+    if (userEmail) filter.userEmail = userEmail;
+
+    const agendamento = await Agendamento.findOneAndDelete(filter);
 
     if (!agendamento) {
       return res.status(404).json({ error: 'Agendamento não encontrado' });
     }
 
-    logger.info(`Agendamento ${id} removido por ${req.user.email}`);
+    logger.info(`Agendamento ${id} removido`);
     res.status(204).send();
   } catch (error: any) {
     logger.error(`Erro ao deletar agendamento: ${error.message}`);
