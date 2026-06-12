@@ -1,17 +1,18 @@
-const Hemocentro = require('../models/Hemocentro');
-const logger = require('../utils/logger');
+import { Request, Response } from 'express';
+import Hemocentro from '../models/Hemocentro';
+import logger from '../utils/logger';
 
-exports.getAll = async (req, res) => {
+export const getAll = async (req: Request, res: Response) => {
   try {
     const hemocentros = await Hemocentro.find();
     res.json(hemocentros);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro ao buscar hemocentros: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 };
 
-exports.create = async (req, res) => {
+export const create = async (req: Request, res: Response) => {
   try {
     const { nome, endereco, telefone, lat, lng } = req.body;
     if (!nome || !endereco || !telefone || lat === undefined || lng === undefined) {
@@ -28,7 +29,7 @@ exports.create = async (req, res) => {
 
     logger.info(`Hemocentro ${nome} cadastrado com sucesso`);
     res.status(201).json(novoHemocentro);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro ao criar hemocentro: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }

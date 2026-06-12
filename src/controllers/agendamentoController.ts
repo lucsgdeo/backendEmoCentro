@@ -1,18 +1,24 @@
-const Agendamento = require('../models/Agendamento');
-const logger = require('../utils/logger');
+import { Response } from 'express';
+import Agendamento from '../models/Agendamento';
+import logger from '../utils/logger';
+import { AuthRequest } from '../middlewares/auth';
 
-exports.getAll = async (req, res) => {
+export const getAll = async (req: AuthRequest, res: Response) => {
   try {
+    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
+    
     const agendamentos = await Agendamento.find({ userEmail: req.user.email }).populate('hemocentroId');
     res.json(agendamentos);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro ao buscar agendamentos: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 };
 
-exports.create = async (req, res) => {
+export const create = async (req: AuthRequest, res: Response) => {
   try {
+    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
+
     const { hemocentroId, data, horario } = req.body;
     if (!hemocentroId || !data || !horario) {
       return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
@@ -27,14 +33,16 @@ exports.create = async (req, res) => {
 
     logger.info(`Agendamento criado para ${req.user.email} no hemocentro ${hemocentroId} em ${data} ${horario}`);
     res.status(201).json(novoAgendamento);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro ao criar agendamento: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 };
 
-exports.update = async (req, res) => {
+export const update = async (req: AuthRequest, res: Response) => {
   try {
+    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
+
     const { id } = req.params;
     const { data, horario } = req.body;
 
@@ -50,14 +58,16 @@ exports.update = async (req, res) => {
 
     logger.info(`Agendamento ${id} atualizado para ${req.user.email}`);
     res.json(agendamento);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro ao atualizar agendamento: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 };
 
-exports.delete = async (req, res) => {
+export const remove = async (req: AuthRequest, res: Response) => {
   try {
+    if (!req.user) return res.status(401).json({ error: 'Não autorizado' });
+
     const { id } = req.params;
     const agendamento = await Agendamento.findOneAndDelete({ _id: id, userEmail: req.user.email });
 
@@ -67,7 +77,7 @@ exports.delete = async (req, res) => {
 
     logger.info(`Agendamento ${id} removido por ${req.user.email}`);
     res.status(204).send();
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro ao deletar agendamento: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }

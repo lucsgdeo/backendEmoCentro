@@ -1,8 +1,9 @@
-const User = require('../models/User');
-const logger = require('../utils/logger');
-const jwt = require('jsonwebtoken');
+import { Request, Response } from 'express';
+import User from '../models/User';
+import logger from '../utils/logger';
+import jwt from 'jsonwebtoken';
 
-exports.register = async (req, res) => {
+export const register = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -14,16 +15,16 @@ exports.register = async (req, res) => {
       return res.status(400).json({ error: 'E-mail já cadastrado' });
     }
 
-    const user = await User.create({ email, password });
+    await User.create({ email, password });
     logger.info(`Usuário ${email} criado com sucesso`);
     res.status(201).json({ message: 'Usuário criado com sucesso' });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro no registro: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -35,7 +36,8 @@ exports.login = async (req, res) => {
       return res.status(401).json({ error: 'Credenciais inválidas' });
     }
 
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+    const secret = process.env.JWT_SECRET || 'secret';
+    const token = jwt.sign({ email: user.email }, secret, { expiresIn: '1d' });
 
     logger.info(`Usuário ${email} logou no sistema`);
     res.json({ 
@@ -43,7 +45,7 @@ exports.login = async (req, res) => {
       user: { email: user.email },
       login: true 
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(`Erro no login: ${error.message}`);
     res.status(500).json({ error: 'Erro no servidor' });
   }

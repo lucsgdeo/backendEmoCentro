@@ -1,6 +1,14 @@
-const jwt = require('jsonwebtoken');
+import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
 
-const auth = (req, res, next) => {
+export interface AuthRequest extends Request {
+  user?: {
+    email: string;
+    [key: string]: any;
+  };
+}
+
+const auth = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -9,14 +17,14 @@ const auth = (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
 
-  // Mantendo suporte ao mock token se necessário, ou apenas JWT real
   if (token === 'mock-jwt-token') {
     req.user = { email: 'admin@example.com' };
     return next();
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    const secret = process.env.JWT_SECRET || 'secret';
+    const decoded = jwt.verify(token, secret) as { email: string };
     req.user = decoded;
     next();
   } catch (error) {
@@ -24,4 +32,4 @@ const auth = (req, res, next) => {
   }
 };
 
-module.exports = auth;
+export default auth;
