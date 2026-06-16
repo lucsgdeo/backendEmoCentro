@@ -14,12 +14,13 @@ export const getAll = async (req: Request, res: Response) => {
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const { nome, endereco, telefone, lat, lng } = req.body;
+    const { externalId, nome, endereco, telefone, lat, lng } = req.body;
     if (!nome || !endereco || !telefone || lat === undefined || lng === undefined) {
       return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
     }
 
     const novoHemocentro = await Hemocentro.create({
+      externalId,
       nome,
       endereco,
       telefone,

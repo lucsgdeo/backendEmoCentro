@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IHemocentro extends Document {
+  externalId?: number;
   nome: string;
   endereco: string;
   telefone: string;
@@ -11,6 +12,11 @@ export interface IHemocentro extends Document {
 }
 
 const hemocentroSchema: Schema = new Schema({
+  externalId: {
+    type: Number,
+    unique: true,
+    sparse: true
+  },
   nome: {
     type: String,
     required: true

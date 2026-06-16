@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Agendamento from '../models/Agendamento';
+import Hemocentro from '../models/Hemocentro';
 import logger from '../utils/logger';
 
 export const getAll = async (req: Request, res: Response) => {
@@ -25,10 +27,20 @@ export const create = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Corpo da requisição é obrigatório' });
     }
 
-    const { userEmail, hemocentroId, data, horario } = req.body;
+    let { userEmail, hemocentroId, data, horario } = req.body;
     
     if (!userEmail || !hemocentroId || !data || !horario) {
       return res.status(400).json({ error: 'Campos obrigatórios ausentes (inclusive userEmail)' });
+    }
+
+    // Se o hemocentroId não for um ObjectId válido, tenta buscar pelo externalId
+    if (!mongoose.Types.ObjectId.isValid(hemocentroId)) {
+      const hemocentro = await Hemocentro.findOne({ externalId: Number(hemocentroId) });
+      if (hemocentro) {
+        hemocentroId = hemocentro._id;
+      } else {
+        return res.status(404).json({ error: 'Hemocentro não encontrado com o ID fornecido' });
+      }
     }
 
     const novoAgendamento = await Agendamento.create({

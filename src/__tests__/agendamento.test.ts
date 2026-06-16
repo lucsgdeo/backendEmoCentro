@@ -46,6 +46,31 @@ describe('Agendamento Endpoints', () => {
     expect(res.body).toHaveProperty('userEmail', 'user@test.com');
   });
 
+  it('should create a new agendamento using externalId (numeric)', async () => {
+    const hemocentro = await Hemocentro.create({
+      externalId: 1,
+      nome: 'Hemocentro Teste Numeric',
+      endereco: 'End',
+      telefone: '123',
+      lat: 0,
+      lng: 0
+    });
+
+    const res = await request(app)
+      .post('/api/agendamentos')
+      .send({
+        userEmail: 'user2@test.com',
+        hemocentroId: "1",
+        data: '2026-10-10',
+        horario: '10:00'
+      });
+    
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toHaveProperty('userEmail', 'user2@test.com');
+    // Verify it saved the actual ObjectId
+    expect(res.body.hemocentroId).toBe(hemocentro._id.toString());
+  });
+
   it('should list agendamentos by userEmail', async () => {
     const hemocentro = await Hemocentro.create({
       nome: 'Hemocentro Teste',
