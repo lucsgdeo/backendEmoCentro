@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IAgendamento extends Document {
   userEmail: string;
-  hemocentroId: Types.ObjectId;
+  hemocentroId?: Types.ObjectId;
   data: string;
   horario: string;
   createdAt: Date;
@@ -17,7 +17,7 @@ const agendamentoSchema: Schema = new Schema({
   hemocentroId: {
     type: Schema.Types.ObjectId,
     ref: 'Hemocentro',
-    required: true
+    required: false
   },
   data: {
     type: String,

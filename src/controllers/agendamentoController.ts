@@ -29,12 +29,12 @@ export const create = async (req: Request, res: Response) => {
 
     let { userEmail, hemocentroId, data, horario } = req.body;
     
-    if (!userEmail || !hemocentroId || !data || !horario) {
-      return res.status(400).json({ error: 'Campos obrigatórios ausentes (inclusive userEmail)' });
+    if (!userEmail || !data || !horario) {
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes (userEmail, data, horario)' });
     }
 
-    // Se o hemocentroId não for um ObjectId válido, tenta buscar pelo externalId
-    if (!mongoose.Types.ObjectId.isValid(hemocentroId)) {
+    // Se o hemocentroId for fornecido e não for um ObjectId válido, tenta buscar pelo externalId
+    if (hemocentroId && !mongoose.Types.ObjectId.isValid(hemocentroId)) {
       const hemocentro = await Hemocentro.findOne({ externalId: Number(hemocentroId) });
       if (hemocentro) {
         hemocentroId = hemocentro._id;
