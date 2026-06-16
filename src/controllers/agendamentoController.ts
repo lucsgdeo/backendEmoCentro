@@ -61,7 +61,12 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(id as string)) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+
     const { data, horario, userEmail } = req.body || {};
 
     const filter: any = { _id: id };
@@ -89,7 +94,12 @@ export const update = async (req: Request, res: Response) => {
 
 export const remove = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(id as string)) {
+      return res.status(400).json({ error: 'ID inválido' });
+    }
+
     const { userEmail } = req.body || {};
 
     const filter: any = { _id: id };

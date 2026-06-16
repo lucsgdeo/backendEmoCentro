@@ -164,4 +164,10 @@ describe('Agendamento Endpoints', () => {
     const count = await Agendamento.countDocuments();
     expect(count).toBe(0);
   });
+
+  it('should return 400 when deleting with an invalid ID', async () => {
+    const res = await request(app).delete('/api/agendamentos/invalid-id');
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toHaveProperty('error', 'ID inválido');
+  });
 });
