@@ -38,7 +38,7 @@ Cria um novo agendamento para doação.
 ```json
 {
   "userEmail": "usuario@exemplo.com",
-  "hemocentroId": "ID_DO_HEMOCENTRO",
+  "hemocentroId": "ID_DO_HEMOCENTRO", // Opcional. Aceita ObjectId ou ID numérico (ex: "1")
   "data": "2026-10-15",
   "horario": "14:00"
 }
