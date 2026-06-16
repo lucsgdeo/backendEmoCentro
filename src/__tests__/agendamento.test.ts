@@ -38,6 +38,7 @@ describe('Agendamento Endpoints', () => {
       .send({
         userEmail: 'user@test.com',
         hemocentroId: hemocentro._id,
+        hemocentroNome: 'Hemocentro Teste',
         data: '2026-10-10',
         horario: '10:00'
       });
@@ -61,6 +62,7 @@ describe('Agendamento Endpoints', () => {
       .send({
         userEmail: 'user2@test.com',
         hemocentroId: "1",
+        hemocentroNome: 'Hemocentro Teste Numeric',
         data: '2026-10-10',
         horario: '10:00'
       });
@@ -76,6 +78,7 @@ describe('Agendamento Endpoints', () => {
       .post('/api/agendamentos')
       .send({
         userEmail: 'no-id@test.com',
+        hemocentroNome: 'Hemocentro Sem ID',
         data: '2026-12-12',
         horario: '12:00'
       });
@@ -97,6 +100,7 @@ describe('Agendamento Endpoints', () => {
     await Agendamento.create({
       userEmail: 'user@test.com',
       hemocentroId: hemocentro._id,
+      hemocentroNome: 'Hemocentro Teste',
       data: '2026-10-10',
       horario: '10:00'
     });
@@ -120,6 +124,7 @@ describe('Agendamento Endpoints', () => {
     const agendamento = await Agendamento.create({
       userEmail: 'user@test.com',
       hemocentroId: hemocentro._id,
+      hemocentroNome: 'Hemocentro Teste',
       data: '2026-10-10',
       horario: '10:00'
     });
@@ -147,6 +152,7 @@ describe('Agendamento Endpoints', () => {
     const agendamento = await Agendamento.create({
       userEmail: 'user@test.com',
       hemocentroId: hemocentro._id,
+      hemocentroNome: 'Hemocentro Teste',
       data: '2026-10-10',
       horario: '10:00'
     });

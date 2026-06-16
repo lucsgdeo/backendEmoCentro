@@ -16,6 +16,7 @@ Retorna os agendamentos. Pode ser filtrado por e-mail.
   {
     "_id": "6a2b64...",
     "userEmail": "usuario@exemplo.com",
+    "hemocentroNome": "Hosp. Estadual Diadema",
     "hemocentroId": {
       "_id": "6a2b64...",
       "nome": "Hosp. Estadual Diadema"
@@ -38,6 +39,7 @@ Cria um novo agendamento para doação.
 ```json
 {
   "userEmail": "usuario@exemplo.com",
+  "hemocentroNome": "Hosp. Estadual Diadema", // Obrigatório
   "hemocentroId": "ID_DO_HEMOCENTRO", // Opcional. Aceita ObjectId ou ID numérico (ex: "1")
   "data": "2026-10-15",
   "horario": "14:00"

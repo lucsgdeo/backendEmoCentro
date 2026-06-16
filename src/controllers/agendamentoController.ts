@@ -27,10 +27,10 @@ export const create = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Corpo da requisição é obrigatório' });
     }
 
-    let { userEmail, hemocentroId, data, horario } = req.body;
+    let { userEmail, hemocentroId, hemocentroNome, data, horario } = req.body;
     
-    if (!userEmail || !data || !horario) {
-      return res.status(400).json({ error: 'Campos obrigatórios ausentes (userEmail, data, horario)' });
+    if (!userEmail || !hemocentroNome || !data || !horario) {
+      return res.status(400).json({ error: 'Campos obrigatórios ausentes (userEmail, hemocentroNome, data, horario)' });
     }
 
     // Se o hemocentroId for fornecido e não for um ObjectId válido, tenta buscar pelo externalId
@@ -46,6 +46,7 @@ export const create = async (req: Request, res: Response) => {
     const novoAgendamento = await Agendamento.create({
       userEmail,
       hemocentroId,
+      hemocentroNome,
       data,
       horario
     });
